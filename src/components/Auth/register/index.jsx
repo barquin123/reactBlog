@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { Navigate, Link, useNavigate } from 'react-router-dom'
 import { doCreateUserWithEmailAndPassword } from '../../../firebase/auth'
+import { setDoc, doc } from 'firebase/firestore'
 import { useAuth } from '../../../context/authContext'
+import { auth, db } from '../../../firebase/firebase'
+import { updateProfile } from 'firebase/auth'
 
 const Register = () => {
 
@@ -12,6 +15,7 @@ const Register = () => {
     const [confirmPassword, setconfirmPassword] = useState('')
     const [isRegistering, setIsRegistering] = useState(false)
     const [errorMessage, setErrorMessage] = useState('')
+    const [fname, setFname] = useState('');
 
     const { userLoggedIn } = useAuth()
 
@@ -33,6 +37,15 @@ const Register = () => {
             setIsRegistering(true);
             try{
                 await doCreateUserWithEmailAndPassword(email, password);
+                const user = auth.currentUser; 
+                if(user){
+                    await setDoc(doc(db, "Users", user.uid),{
+                        email: user.email,
+                        fullName: fname,
+                        userId: user.uid,
+                    });
+                    await updateProfile(user, { displayName: fname });
+                }
                 navigate("/home");
             }catch(error){
                 console.log('error login', error);
@@ -59,6 +72,18 @@ const Register = () => {
                         onSubmit={onSubmit}
                         className="space-y-4"
                     >
+                        <div>
+                            <label className="text-sm text-gray-600 font-bold">
+                                Full Name
+                            </label>
+                            <input
+                                type="text"
+                                required
+                                onChange={(e) => { setFname(e.target.value) }}
+                                className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:indigo-600 shadow-sm rounded-lg transition duration-300"
+                            />
+                        </div>
+                        
                         <div>
                             <label className="text-sm text-gray-600 font-bold">
                                 Email
