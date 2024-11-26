@@ -16,19 +16,14 @@ import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
 
-  apiKey: "AIzaSyBE9Yzd7sNEn0CEvLycRAkVyybs4RqSzdY",
-
-  authDomain: "blog-8e738.firebaseapp.com",
-
-  projectId: "blog-8e738",
-
-  storageBucket: "blog-8e738.firebasestorage.app",
-
-  messagingSenderId: "656573159207",
-
-  appId: "1:656573159207:web:8b19400252d7da05dffb02",
-
-  measurementId: "G-WRZ40JDC7Q"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
+  
 
 };
 

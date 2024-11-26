@@ -43,6 +43,7 @@ const Register = () => {
                         email: user.email,
                         fullName: fname,
                         userId: user.uid,
+                        // photoURL: user.photoURL || '',
                     });
                     await updateProfile(user, { displayName: fname });
                 }

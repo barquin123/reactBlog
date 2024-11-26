@@ -5,7 +5,7 @@ import Header from "./components/Header";
 import Home from "./components/Home";
 
 import { AuthProvider } from "./context/authContext";
-import { useRoutes } from "react-router-dom";
+import { useRoutes, useLocation  } from "react-router-dom";
 
 function App() {
   const routesArray = [
@@ -27,10 +27,12 @@ function App() {
     },
   ];
   let routesElement = useRoutes(routesArray);
+
+  const shouldShowHeader = location.pathname === "/home";
   return (
     <AuthProvider>
-      <Header />
-      <div className="w-full h-screen flex flex-col">{routesElement}</div>
+      {shouldShowHeader && <Header />}
+      <div className="py-5">{routesElement}</div>
     </AuthProvider>
   );
 }

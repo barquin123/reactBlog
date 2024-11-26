@@ -1,7 +1,7 @@
 import React from "react";
 import { useContext, useEffect, useState } from "react";
 import { auth } from "../../firebase/firebase";
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, reload } from "firebase/auth";
 import { Navigate } from "react-router-dom";
 
 const AuthContext = React.createContext();
@@ -21,7 +21,8 @@ export function AuthProvider({ children }){
     }, [])
 
     async function initializeUser(user){
-        if (user){
+        if (user){  
+            await reload(user); 
             setCurrentUser({...user});
             setuserLoggedIn(true);
         }else{
