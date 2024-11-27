@@ -1,5 +1,6 @@
 import Login from "./components/Auth/login";
 import Register from "./components/Auth/register";
+import AddBlogPost from "./components/Blog/addBlogPost";
 
 import Header from "./components/Header";
 import Home from "./components/Home";
@@ -25,10 +26,14 @@ function App() {
       path: "/home",
       element: <Home />,
     },
+    {
+      path: "/addblogpost",
+      element: <AddBlogPost />,
+    },
   ];
   let routesElement = useRoutes(routesArray);
 
-  const shouldShowHeader = location.pathname === "/home";
+  const shouldShowHeader = location.pathname === "/home" || "/addblogpost";
   return (
     <AuthProvider>
       {shouldShowHeader && <Header />}

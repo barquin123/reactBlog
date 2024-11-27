@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/authContext';
 import { doSignOut } from '../../firebase/auth';
@@ -10,7 +10,7 @@ const Header = () => {
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
     const { userLoggedIn, currentUser } = useAuth();
-    const [modalActive, setModalActive] = useState(false);
+    // const [modalActive, setModalActive] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -51,9 +51,9 @@ const Header = () => {
         fetchData();
     }, [currentUser]);
 
-    const modalActivate = () => {
-        setModalActive(!modalActive); // This line toggles the modalActive state
-    };
+    // const modalActivate = () => {
+    //     setModalActive(!modalActive); // This line toggles the modalActive state
+    // };
 
     if (loading) {
         return null; // Optionally, display a loading spinner
@@ -64,7 +64,21 @@ const Header = () => {
             <nav className="flex flex-row gap-x-2 w-full h-12 justify-end items-center bg-black px-9">
             {userLoggedIn ? (
                 <>
-                    <div className="text-sm text-blue-600 font-bold text-white cursor-pointer" onClick={modalActivate}>Add Blog</div>
+                   {location.pathname === '/addblogpost' ? (
+                            <div
+                                className="text-sm text-blue-600 font-bold text-white cursor-pointer"
+                                onClick={() => navigate('/home')} // Navigate to Home page
+                            >
+                                Home
+                            </div>
+                        ) : (
+                            <Link
+                                className="text-sm text-blue-600 font-bold text-white"
+                                to="/addblogpost" // Navigate to Add Blog page
+                            >
+                                Add Blog
+                            </Link>
+                        )}
                     <img className="rounded-full w-8" src={currentUser.photoURL && currentUser.photoURL.trim() !== '' ? currentUser.photoURL : 'https://www.gravatar.com/avatar/?d=identicon'} alt="User Avatar"/>
                     <div className="relative group">
                         <p className="text-sm text-blue-600 font-bold text-white cursor-pointer">
@@ -98,12 +112,12 @@ const Header = () => {
             )}
         </nav>
          {/* Modal */}
-            <div className={`blogModal ${modalActive ? 'block' : 'hidden'} absolute`}>
+            {/* <div className={`blogModal ${modalActive ? 'block' : 'hidden'} absolute`}>
             <div className="modal-content">
                 <span className="close cursor-pointer" onClick={modalActivate}>&times;</span>
                 <p>Some text in the Modal..</p>
             </div>
-        </div>
+        </div> */}
         </>
     );
 };
