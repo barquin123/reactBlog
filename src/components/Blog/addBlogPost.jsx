@@ -1,12 +1,10 @@
-import React, { useEffect, useReducer, useState } from 'react'
-import { BlogInistialState, BlogReducer } from './blogReducer'
-import {storage ,db, auth } from '../../firebase/firebase'
+import React, { useEffect, useReducer, useState } from 'react';
+import { BlogInistialState, BlogReducer } from './blogReducer';
+import { storage, db, auth } from '../../firebase/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { collection, addDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
-import Modal from '../Modal';
-
-// import { ref } from 'firebase/storage';
+// import Modal from '../Modal';
 
 const AddBlogPost = () => {
 
@@ -14,25 +12,26 @@ const AddBlogPost = () => {
   const [isloading, setIsLoading] = useState(false);
   const { currentUser } = auth;
   const navigate = useNavigate();
+
   useEffect(() => {
     if (!currentUser) {
       navigate('/login');
     }
     setIsLoading(false);
-  },[currentUser, navigate])
-  
+  }, [currentUser, navigate]);
+
   const handleInputChange = e => {
-    dispatch({type: 'changeInputs', 
-      payload: {name: e.target.name, value: e.target.value}
-    })
-  }
+    dispatch({ type: 'changeInputs', 
+      payload: { name: e.target.name, value: e.target.value }
+    });
+  };
 
   const handleImgChange = e => {
     dispatch({
       type: 'changeFile', 
       payload: e.target.files[0]
-    })
-  }
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -63,16 +62,22 @@ const AddBlogPost = () => {
         imageUrl: downloadURL, // Save the image URL in Firestore
         createdAt: new Date(),
         author: currentUser ? currentUser.displayName : 'Anonymous',
+        authorId: currentUser ? currentUser.uid : 'anonymous', // Add the authorId (current user's uid)
       };
 
-      // Save the blog post data to Firestore
-      await addDoc(collection(db, 'blogs'), blogData);
+      // Save the blog post data to Firestore and get the document reference
+      const docRef = await addDoc(collection(db, 'blogs'), blogData);
+
+      // You can now access the `docRef.id`, which is the auto-generated `blogId`
+      console.log('New blog post added with ID:', docRef.id);
+
+      // Optionally, you can navigate to the blog post or store `docRef.id` in the state
+      navigate(`/blog/${docRef.id}`);
 
       // Hide loading state
       setIsLoading(false);
-      // Reset the form state
-      navigate('/home');
 
+      // Reset the form state
     } catch (error) {
       console.error('Error uploading image or saving post:', error);
       alert('Error uploading image or saving post');
@@ -81,41 +86,41 @@ const AddBlogPost = () => {
 
   function autoheight(element) {
     var el = document.getElementById(element);
-        el.style.height = (el.scrollHeight)+"px";
-    }
+    el.style.height = (el.scrollHeight) + "px";
+  }
 
   return (
     <>
-      {/* {isloading && <Modal message='Error on creating blog' modalTitle="Blog Error" />} */}
       {isloading && <div className='fixed loaderContainer top-0 left-0 z-50 w-full h-full bg-black bg-opacity-50 block '>
-          <div className="loader">
-            <span>Loading...</span>
-          </div>
-        </div>}
+        <div className="loader">
+          <span>Loading...</span>
+        </div>
+      </div>}
+
       <div className="AddBlogPostContainer container w-96 mx-auto">
-       <h2 className='text-3xl font-bold text-center mb-5'>New Blog Post</h2>
-          <form className='addBlogForm'>
-              <div className="form-control flex flex-col mb-5">
-                <label htmlFor='thumbNailImg'>Thumbnail</label>
-                <input type="file" className='thumbNailImg outline-none' onChange={handleImgChange} />
-              </div>
-              <div className="form-control flex flex-col mb-5">
-                <label htmlFor="title">Title</label>
-                <input className='min-h-5 p-3 outline-none' type='text' id='title' name='title' required onChange={handleInputChange} onInput={() => autoheight('title')}/>
-              </div>
-              <div className="form-control flex flex-col mb-5">
-                <label htmlFor='content'>Short Description</label>
-                  <textarea className='min-h-100 p-3 outline-none' id='shortDesc' name='shortDesc' required onChange={handleInputChange} onInput={() => autoheight('shortDesc')} />
-              </div>
-              <div className="form-control flex flex-col mb-5">
-                <label htmlFor='content'>Content</label>
-                  <textarea className='min-h-100 p-3 outline-none' id='content' name='content' required onChange={handleInputChange} onInput={() => autoheight('content')} />
-              </div>
-              <button onClick={handleSubmit} className='p-5 bg-green-400 hover:brightness-50' type='submit'>Add Post</button>
-          </form>
+        <h2 className='text-3xl font-bold text-center mb-5'>New Blog Post</h2>
+        <form className='addBlogForm'>
+          <div className="form-control flex flex-col mb-5">
+            <label htmlFor='thumbNailImg'>Thumbnail</label>
+            <input type="file" className='thumbNailImg outline-none' onChange={handleImgChange} />
+          </div>
+          <div className="form-control flex flex-col mb-5">
+            <label htmlFor="title">Title</label>
+            <input className='min-h-5 p-3 outline-none' type='text' id='title' name='title' required onChange={handleInputChange} onInput={() => autoheight('title')} />
+          </div>
+          <div className="form-control flex flex-col mb-5">
+            <label htmlFor='content'>Short Description</label>
+            <textarea className='min-h-100 p-3 outline-none' id='shortDesc' name='shortDesc' required onChange={handleInputChange} onInput={() => autoheight('shortDesc')} />
+          </div>
+          <div className="form-control flex flex-col mb-5">
+            <label htmlFor='content'>Content</label>
+            <textarea className='min-h-100 p-3 outline-none' id='content' name='content' required onChange={handleInputChange} onInput={() => autoheight('content')} />
+          </div>
+          <button onClick={handleSubmit} className='p-5 bg-green-400 hover:brightness-50' type='submit'>Add Post</button>
+        </form>
       </div>
     </>
-  )
+  );
 }
 
-export default AddBlogPost
+export default AddBlogPost;

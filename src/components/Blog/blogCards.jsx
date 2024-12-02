@@ -1,11 +1,12 @@
 import PropTypes from 'prop-types'; // Import PropTypes
 
-// Set default values directly in function parameters
 const BlogCards = ({ 
   blogImage = "https://placehold.jp/300x300.png", // Default image if not passed
   blogTitle, 
   blogCreatedAt, 
-  blogCreatedBy 
+  blogCreatedBy,
+  onEdit, 
+  onDelete 
 }) => {
   return (
     <div className="group cards-Container flex flex-col justify-center w-fit m-auto">
@@ -20,6 +21,28 @@ const BlogCards = ({
           <span className="createdAt">{blogCreatedAt}</span>
           <span className="createdBy">{blogCreatedBy}</span>
         </p>
+
+        {/* Conditionally render Edit and Delete buttons */}
+        {(onEdit || onDelete) && (
+          <div className="actions mt-3">
+            {onEdit && (
+              <button 
+                onClick={() => onEdit()}
+                className="editBtn text-blue-500 hover:underline"
+              >
+                Edit
+              </button>
+            )}
+            {onDelete && (
+              <button 
+                onClick={() => onDelete()}
+                className="deleteBtn text-red-500 hover:underline ml-3"
+              >
+                Delete
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -31,6 +54,8 @@ BlogCards.propTypes = {
   blogTitle: PropTypes.string.isRequired,  // Title should be a required string
   blogCreatedAt: PropTypes.string.isRequired, // Created date should be a required string
   blogCreatedBy: PropTypes.string.isRequired, // Author name should be a required string
+  onEdit: PropTypes.func,               // Optional edit function
+  onDelete: PropTypes.func,             // Optional delete function
 };
 
 export default BlogCards;
