@@ -59,6 +59,7 @@ const Header = () => {
         return null; // Optionally, display a loading spinner
     }
 
+    
     return (
         <>
             <nav className="flex flex-row gap-x-2 w-full h-12 justify-end items-center bg-black px-9">

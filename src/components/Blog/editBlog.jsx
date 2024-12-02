@@ -2,12 +2,12 @@ import React, { useEffect, useReducer, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom'; // useParams for URL params
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase/firebase';
-import { BlogPostReducer, BlogPostInitialState, UPDATE_BLOG, SET_LOADING, SET_ERROR } from './blogPostReducer'; // Import reducer and actions
+import { BlogPostInitialState, BlogPostReducer, SET_ERROR, SET_LOADING, UPDATE_BLOG } from '../Home/blogPostReducer';
+// import { BlogPostReducer, BlogPostInitialState, UPDATE_BLOG, SET_LOADING, SET_ERROR } from './blogPostReducer'; // Import reducer and actions
 
 const EditBlog = () => {
   const { blogId } = useParams(); // Get the blogId from the URL
   const navigate = useNavigate();
-  
   const [state, dispatch] = useReducer(BlogPostReducer, BlogPostInitialState);
   const [blog, setBlog] = useState({
     title: '',
@@ -18,6 +18,7 @@ const EditBlog = () => {
   const { blogs, isLoading, error } = state;
 
   useEffect(() => {
+    
     // Fetch the blog data from Firestore when the component mounts
     const fetchBlogData = async () => {
       dispatch({ type: SET_LOADING, payload: true });
@@ -32,7 +33,7 @@ const EditBlog = () => {
         }
       } catch (err) {
         dispatch({ type: SET_ERROR, payload: 'Error fetching blog data' });
-        console.error(err);
+        console.log(err);
       } finally {
         dispatch({ type: SET_LOADING, payload: false });
       }
@@ -73,7 +74,7 @@ const EditBlog = () => {
       });
 
       // Navigate back to the home page after updating the blog
-      navigate('/home');
+      navigate(`/blog/${blogId}`);
     } catch (err) {
       dispatch({ type: SET_ERROR, payload: 'Error updating blog' });
       console.error(err);

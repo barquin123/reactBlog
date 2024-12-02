@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types'; // Import PropTypes
+import { Link } from 'react-router-dom';
 
 const BlogCards = ({ 
   blogImage = "https://placehold.jp/300x300.png", // Default image if not passed
@@ -6,28 +7,31 @@ const BlogCards = ({
   blogCreatedAt, 
   blogCreatedBy,
   onEdit, 
+  hrefLink,
   onDelete 
 }) => {
   return (
     <div className="group cards-Container flex flex-col justify-center w-fit m-auto">
       <div className="cards">
-        <img
-          className="blogThumb"
-          src={blogImage}
-          alt="Blog Thumbnail"
-        />
-        <h2 className="blogTitle font-bold text-6xl uppercase">{blogTitle}</h2>
-        <p className="group flex flex-col">
-          <span className="createdAt">{blogCreatedAt}</span>
-          <span className="createdBy">{blogCreatedBy}</span>
-        </p>
+        <Link to={hrefLink}>
+          <img
+            className="blogThumb"
+            src={blogImage}
+            alt="Blog Thumbnail"
+          />
+          <h2 className="blogTitle font-bold text-6xl uppercase">{blogTitle}</h2>
+          <p className="group flex flex-col">
+            <span className="createdAt">{blogCreatedAt}</span>
+            <span className="createdBy">{blogCreatedBy}</span>
+          </p>
+        </Link>
 
         {/* Conditionally render Edit and Delete buttons */}
         {(onEdit || onDelete) && (
           <div className="actions mt-3">
             {onEdit && (
               <button 
-                onClick={() => onEdit()}
+                onClick={onEdit}
                 className="editBtn text-blue-500 hover:underline"
               >
                 Edit
@@ -35,7 +39,7 @@ const BlogCards = ({
             )}
             {onDelete && (
               <button 
-                onClick={() => onDelete()}
+                onClick={onDelete}
                 className="deleteBtn text-red-500 hover:underline ml-3"
               >
                 Delete
@@ -55,7 +59,8 @@ BlogCards.propTypes = {
   blogCreatedAt: PropTypes.string.isRequired, // Created date should be a required string
   blogCreatedBy: PropTypes.string.isRequired, // Author name should be a required string
   onEdit: PropTypes.func,               // Optional edit function
-  onDelete: PropTypes.func,             // Optional delete function
+  onDelete: PropTypes.func,       
+  hrefLink: PropTypes.string.isRequired, // Link should be a required string
 };
 
 export default BlogCards;

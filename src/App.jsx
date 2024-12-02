@@ -7,8 +7,11 @@ import Home from "./components/Home";
 
 import { AuthProvider } from "./context/authContext";
 import { useRoutes, useLocation  } from "react-router-dom";
+import BlogPost from "./components/Blog/index";
+import EditBlog from "./components/Blog/editBlog";
 
 function App() {
+  const location = useLocation();
   const routesArray = [
     {
       path: "*",
@@ -29,6 +32,14 @@ function App() {
     {
       path: "/addblogpost",
       element: <AddBlogPost />,
+    },
+    {
+      path: "/blog/:id",
+      element: <BlogPost />,
+    },
+    {
+      path: "/edit-blog/:blogId",  // Add route for edit blog
+      element: <EditBlog />,  // Link to EditBlog component
     },
   ];
   let routesElement = useRoutes(routesArray);
