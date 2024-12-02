@@ -59,28 +59,37 @@ const Header = () => {
         return null; // Optionally, display a loading spinner
     }
 
-    
+     // Check if we are on the edit-blog page
+     const isEditPage = location.pathname.startsWith('/edit-blog'); // Check if on the Edit Blog page
+     const isAddBlogPage = location.pathname === '/addblogpost'; // Check if on the Add Blog page
+     const isBlogPage = location.pathname.startsWith('/blog'); // Check if on the Blog page
     return (
         <>
-            <nav className="flex flex-row gap-x-2 w-full h-12 justify-end items-center bg-black px-9">
+        <nav className="flex flex-row gap-x-2 w-full h-12 justify-end items-center bg-black px-9">
             {userLoggedIn ? (
                 <>
-                   {location.pathname === '/addblogpost' ? (
-                            <div
-                                className="text-sm text-blue-600 font-bold text-white cursor-pointer"
-                                onClick={() => navigate('/home')} // Navigate to Home page
-                            >
-                                Home
-                            </div>
-                        ) : (
-                            <Link
-                                className="text-sm text-blue-600 font-bold text-white"
-                                to="/addblogpost" // Navigate to Add Blog page
-                            >
-                                Add Blog
-                            </Link>
-                        )}
-                    <img className="rounded-full w-8" src={currentUser.photoURL && currentUser.photoURL.trim() !== '' ? currentUser.photoURL : 'https://www.gravatar.com/avatar/?d=identicon'} alt="User Avatar"/>
+                    {/* Home Link */}
+                    {(isAddBlogPage || isEditPage || isBlogPage) ? (
+                        <div
+                            className="text-sm text-blue-600 font-bold text-white cursor-pointer"
+                            onClick={() => navigate('/home')} // Navigate to Home page
+                        >
+                            Home
+                        </div>
+                    ) : (
+                        <Link
+                            className="text-sm text-blue-600 font-bold text-white"
+                            to="/addblogpost" // Navigate to Add Blog page
+                        >
+                            Add Blog
+                        </Link>
+                    )}
+                    
+                    <img
+                        className="rounded-full w-8"
+                        src={currentUser.photoURL && currentUser.photoURL.trim() !== '' ? currentUser.photoURL : 'https://www.gravatar.com/avatar/?d=identicon'}
+                        alt="User Avatar"
+                    />
                     <div className="relative group">
                         <p className="text-sm text-blue-600 font-bold text-white cursor-pointer">
                             {userData?.fullName || currentUser.email}
@@ -112,14 +121,7 @@ const Header = () => {
                 </>
             )}
         </nav>
-         {/* Modal */}
-            {/* <div className={`blogModal ${modalActive ? 'block' : 'hidden'} absolute`}>
-            <div className="modal-content">
-                <span className="close cursor-pointer" onClick={modalActivate}>&times;</span>
-                <p>Some text in the Modal..</p>
-            </div>
-        </div> */}
-        </>
+    </>
     );
 };
 
