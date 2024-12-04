@@ -102,13 +102,11 @@ const Header = () => {
                             <li className="dropdown-menu-item hover:underline cursor-pointer">Settings</li>
                             <li
                                 onClick={() => {
-                                    doSignOut().then(() => {
-                                        window.location.href = '/login';
-                                    });
+                                    doSignOut()
                                 }}
                                 className="dropdown-menu-item hover:underline cursor-pointer"
                             >
-                                Logout
+                                <Link to={'/login'}>Logout</Link>
                             </li>
                         </ul>
                     </div>
