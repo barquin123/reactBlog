@@ -1,12 +1,12 @@
 import React, { useEffect, useReducer, useRef, useState } from 'react';
-import { BlogInistialState, BlogReducer } from './blogReducer';
 import { storage, db, auth } from '../../firebase/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { collection, addDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
+import { BlogInistialState, BlogReducer } from './addBlogReducer';
 
 const AddBlogPost = () => {
-  const [state, dispatch] = useReducer(BlogReducer, BlogInistialState);
+  const [state, dispatch] = useReducer( BlogReducer, BlogInistialState);
   const [isLoading, setIsLoading] = useState(false);
   const { currentUser } = auth;
   const [fileName, setFileName] = useState('')
