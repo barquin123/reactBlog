@@ -9,13 +9,14 @@ import { AuthProvider } from "./context/authContext";
 import { useRoutes, useLocation  } from "react-router-dom";
 import BlogPost from "./components/Blog/index";
 import EditBlog from "./components/Blog/editBlog";
+import Profile from "./components/Auth/profile";
 
 function App() {
   const location = useLocation();
   const routesArray = [
     {
       path: "*",
-      element: <Login />,
+      element: <Home />,
     },
     {
       path: "/login",
@@ -41,13 +42,17 @@ function App() {
       path: "/edit-blog/:blogId",  // Add route for edit blog
       element: <EditBlog />,  // Link to EditBlog component
     },
+    {
+      path: "/profile",  // Add route for edit blog
+      element: <Profile />,  // Link to EditBlog component
+    },
   ];
   let routesElement = useRoutes(routesArray);
 
-  const shouldShowHeader = location.pathname === "/home" || "/addblogpost";
+  // const shouldShowHeader = location.pathname === "/home" || "/addblogpost";
   return (
     <AuthProvider>
-      {shouldShowHeader && <Header />}
+      <Header />
       <div className="py-5">{routesElement}</div>
     </AuthProvider>
   );

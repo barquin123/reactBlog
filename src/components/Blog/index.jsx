@@ -39,15 +39,19 @@ const BlogPost = () => {
   }
 
   return (
-    <div className="BlogPostContainer">
-      <h1>{blog.title}</h1>
-      <img src={blog.imageUrl} alt={blog.title} className="blog-image" />
-      <p><strong>Author:</strong> {blog.author}</p>
-      <p><strong>Published on:</strong> {new Date(blog.createdAt.seconds * 1000).toLocaleDateString()}</p>
-      <h3>Short Description</h3>
-      <p>{blog.shortDesc}</p>
-      <h3>Content</h3>
-      <p>{blog.content}</p>
+    <div className="BlogPostContainer max-w-3xl mx-auto">
+      <h1 className='font-bold uppercase text-center text-3xl'>{blog.title}</h1>
+      <div className="container w-fit m-auto">
+        <img src={blog.imageUrl} alt={blog.title} className={`blog-image mb-5 ${blog.imageUrl ? '' : 'hidden'}`} />
+        <div className="flex justify-between">
+          <p><strong>Author:</strong> {blog.author}</p>
+          <p><strong>Published on:</strong> {new Date(blog.createdAt.seconds * 1000).toLocaleDateString()}</p>
+        </div>
+        <h3>Short Description</h3>
+        <p>{blog.shortDesc}</p>
+        <h3>Content</h3>
+        <p>{blog.content}</p>
+      </div>
     </div>
   );
 };

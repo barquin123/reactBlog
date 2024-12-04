@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 const BlogCards = ({ 
   blogImage = "https://placehold.jp/300x300.png", // Default image if not passed
   blogTitle, 
+  blogShortDesc,
   blogCreatedAt, 
   blogCreatedBy,
   onEdit, 
@@ -12,7 +13,7 @@ const BlogCards = ({
 }) => {
   return (
     <div className="group cards-Container flex flex-col justify-center w-fit m-auto">
-      <div className="cards">
+      <div className="cards mb-5">
         <Link to={hrefLink}>
           <img
             className="blogThumb"
@@ -20,7 +21,8 @@ const BlogCards = ({
             alt="Blog Thumbnail"
           />
           <h2 className="blogTitle font-bold text-6xl uppercase">{blogTitle}</h2>
-          <p className="group flex flex-col">
+          <p>{blogShortDesc}</p>
+          <p className="group flex justify-between">
             <span className="createdAt">{blogCreatedAt}</span>
             <span className="createdBy">{blogCreatedBy}</span>
           </p>
@@ -58,6 +60,7 @@ BlogCards.propTypes = {
   blogTitle: PropTypes.string.isRequired,  // Title should be a required string
   blogCreatedAt: PropTypes.string.isRequired, // Created date should be a required string
   blogCreatedBy: PropTypes.string.isRequired, // Author name should be a required string
+  blogShortDesc: PropTypes.string.isRequired, 
   onEdit: PropTypes.func,               // Optional edit function
   onDelete: PropTypes.func,       
   hrefLink: PropTypes.string.isRequired, // Link should be a required string

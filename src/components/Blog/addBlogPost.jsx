@@ -1,17 +1,20 @@
-import React, { useEffect, useReducer, useState } from 'react';
+import React, { useEffect, useReducer, useState, useRef } from 'react';
 import { BlogInistialState, BlogReducer } from './blogReducer';
 import { storage, db, auth } from '../../firebase/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { collection, addDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
-// import Modal from '../Modal';
 
 const AddBlogPost = () => {
-
   const [state, dispatch] = useReducer(BlogReducer, BlogInistialState);
   const [isloading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   const { currentUser } = auth;
   const navigate = useNavigate();
+
+  // Create a ref for the file input
+  const fileInputRef = useRef(null);
+  const [fileName, setFileName] = useState(''); // To store the name of the file selected
 
   useEffect(() => {
     if (!currentUser) {
@@ -21,38 +24,68 @@ const AddBlogPost = () => {
   }, [currentUser, navigate]);
 
   const handleInputChange = e => {
-    dispatch({ type: 'changeInputs', 
+    dispatch({
+      type: 'changeInputs',
       payload: { name: e.target.name, value: e.target.value }
     });
   };
 
-  const handleImgChange = e => {
+  const handleImgChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const preview = URL.createObjectURL(file);
+      dispatch({
+        type: 'changeFile',
+        payload: { file, preview },
+      });
+      setFileName(file.name); // Set file name when file is selected
+    }
+  };
+
+  // Function to clear the file and preview state, and reset the input value
+  const handleClearPreview = () => {
     dispatch({
-      type: 'changeFile', 
-      payload: e.target.files[0]
+      type: 'changeFile',
+      payload: { file: null, preview: null },
     });
+    // Reset the file input value and remove the file name
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''; // Clears the file input
+      setFileName(''); // Reset file name
+    }
+  };
+
+  // Form validation function
+  const validateForm = () => {
+    if (!state.title || !state.shortDesc || !state.content) {
+      setError('Please fill in all required fields');
+      return false;
+    }
+    setError('');
+    return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!state.image) {
-      alert('Please select an image');
-      return;
+    if (!validateForm()) {
+      return; // Stop submission if validation fails
     }
 
     try {
-      // Show loading state if needed
       setIsLoading(true);
 
+      let downloadURL = null; // Initialize the image URL as null
+
       // Create a reference for the image in Firebase Storage
-      const storageRef = ref(storage, `blogImages/${state.image.name}`);
+      if (state.image) {
+        const storageRef = ref(storage, `blogImages/${state.image.name}`);
 
-      // Upload the image to Firebase Storage
-      await uploadBytes(storageRef, state.image);
+        // Upload the image to Firebase Storage
+        await uploadBytes(storageRef, state.image);
 
-      // Get the download URL of the uploaded image
-      const downloadURL = await getDownloadURL(storageRef);
+        // Get the download URL of the uploaded image
+        downloadURL = await getDownloadURL(storageRef);
+      }
 
       // Prepare the blog post data
       const blogData = {
@@ -101,20 +134,72 @@ const AddBlogPost = () => {
         <h2 className='text-3xl font-bold text-center mb-5'>New Blog Post</h2>
         <form className='addBlogForm'>
           <div className="form-control flex flex-col mb-5">
-            <label htmlFor='thumbNailImg'>Thumbnail</label>
-            <input type="file" className='thumbNailImg outline-none' onChange={handleImgChange} />
+            <label>Thumbnail</label>
+            <input
+              type="file"
+              className='thumbNailImg outline-none hidden' // Hide the file input
+              id='thumbNailImg'
+              onChange={handleImgChange}
+              ref={fileInputRef} // Reference to the file input
+            />
+            {/* Custom file input */}
+            <label
+              htmlFor='thumbNailImg'
+              className="cursor-pointer cursor-pointer text-gray-600 bg-blue-300 p-3 rounded-md text-center"
+            >
+              {fileName ? fileName : 'Choose a file'} {/* Show file name if selected */}
+            </label>
+
+            {state.imagePreview && (
+              <div className="mt-3 relative">
+                <img
+                  src={state.imagePreview}
+                  alt="Thumbnail Preview"
+                  className="w-48 h-48 object-cover border border-gray-300"
+                />
+                <button
+                  type="button"
+                  onClick={handleClearPreview}
+                  className="absolute top-0 right-0 text-white bg-red-500 rounded-full p-1"
+                >
+                  ×
+                </button>
+              </div>
+            )}
           </div>
           <div className="form-control flex flex-col mb-5">
             <label htmlFor="title">Title</label>
-            <input className='min-h-5 p-3 outline-none' type='text' id='title' name='title' required onChange={handleInputChange} onInput={() => autoheight('title')} />
+            <input
+              className='min-h-5 p-3 outline-none'
+              type='text'
+              id='title'
+              name='title'
+              required
+              onChange={handleInputChange}
+              onInput={() => autoheight('title')}
+            />
           </div>
           <div className="form-control flex flex-col mb-5">
             <label htmlFor='content'>Short Description</label>
-            <textarea className='min-h-100 p-3 outline-none' id='shortDesc' name='shortDesc' required onChange={handleInputChange} onInput={() => autoheight('shortDesc')} />
+            <textarea
+              className='min-h-100 p-3 outline-none'
+              id='shortDesc'
+              name='shortDesc'
+              required
+              onChange={handleInputChange}
+              onInput={() => autoheight('shortDesc')}
+            />
           </div>
           <div className="form-control flex flex-col mb-5">
             <label htmlFor='content'>Content</label>
-            <textarea className='min-h-100 p-3 outline-none' id='content' name='content' required onChange={handleInputChange} onInput={() => autoheight('content')} />
+            <textarea
+              className='min-h-100 p-3 outline-none'
+              id='content'
+              name='content'
+              required
+              onChange={handleInputChange}
+              onInput={() => autoheight('content')}
+            />
           </div>
           <button onClick={handleSubmit} className='p-5 bg-green-400 hover:brightness-50' type='submit'>Add Post</button>
         </form>

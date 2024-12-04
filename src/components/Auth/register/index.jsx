@@ -49,8 +49,12 @@ const Register = () => {
                 }
                 navigate("/home");
             }catch(error){
-                console.log('error login', error);
-                setErrorMessage("error logging in")
+                if (error.code === 'auth/email-already-in-use') {
+                    setErrorMessage('This email is already registered. Please use a different email.');
+                } else {
+                    console.log('error login', error);
+                    setErrorMessage("Error registering user. Please try again.");
+                }
             }finally{
                 setIsRegistering(false);
             }
@@ -62,10 +66,10 @@ const Register = () => {
             {userLoggedIn && (<Navigate to={'/home'} replace={true} />)}
 
             <main className="w-full h-screen flex self-center place-content-center place-items-center">
-                <div className="w-96 text-gray-600 space-y-5 p-4 shadow-xl border rounded-xl">
+                <div className="w-96 text-white-600 space-y-5 p-4 shadow-xl border rounded-xl">
                     <div className="text-center mb-6">
                         <div className="mt-2">
-                            <h3 className="text-gray-800 text-xl font-semibold sm:text-2xl">Create a New Account</h3>
+                            <h3 className="text-white-800 text-xl font-semibold sm:text-2xl">Create a New Account</h3>
                         </div>
 
                     </div>
@@ -74,19 +78,19 @@ const Register = () => {
                         className="space-y-4"
                     >
                         <div>
-                            <label className="text-sm text-gray-600 font-bold">
+                            <label className="text-sm text-white-600 font-bold">
                                 Full Name
                             </label>
                             <input
                                 type="text"
                                 required
                                 onChange={(e) => { setFname(e.target.value) }}
-                                className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:indigo-600 shadow-sm rounded-lg transition duration-300"
+                                className="w-full mt-2 px-3 py-2 text-white-500 bg-transparent outline-none border focus:indigo-600 shadow-sm rounded-lg transition duration-300"
                             />
                         </div>
                         
                         <div>
-                            <label className="text-sm text-gray-600 font-bold">
+                            <label className="text-sm text-white-600 font-bold">
                                 Email
                             </label>
                             <input
@@ -94,12 +98,12 @@ const Register = () => {
                                 autoComplete='email'
                                 required
                                 value={email} onChange={(e) => { setEmail(e.target.value) }}
-                                className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:indigo-600 shadow-sm rounded-lg transition duration-300"
+                                className="w-full mt-2 px-3 py-2 text-white-500 bg-transparent outline-none border focus:indigo-600 shadow-sm rounded-lg transition duration-300"
                             />
                         </div>
 
                         <div>
-                            <label className="text-sm text-gray-600 font-bold">
+                            <label className="text-sm text-white-600 font-bold">
                                 Password
                             </label>
                             <input
@@ -108,12 +112,12 @@ const Register = () => {
                                 autoComplete='new-password'
                                 required
                                 value={password} onChange={(e) => { setPassword(e.target.value) }}
-                                className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg transition duration-300"
+                                className="w-full mt-2 px-3 py-2 text-white-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg transition duration-300"
                             />
                         </div>
 
                         <div>
-                            <label className="text-sm text-gray-600 font-bold">
+                            <label className="text-sm text-white-600 font-bold">
                                 Confirm Password
                             </label>
                             <input
@@ -122,7 +126,7 @@ const Register = () => {
                                 autoComplete='off'
                                 required
                                 value={confirmPassword} onChange={(e) => { setconfirmPassword(e.target.value) }}
-                                className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg transition duration-300"
+                                className="w-full mt-2 px-3 py-2 text-white-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg transition duration-300"
                             />
                         </div>
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, Links, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/authContext';
 import { doSignOut } from '../../firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
@@ -62,14 +62,17 @@ const Header = () => {
      // Check if we are on the edit-blog page
      const isEditPage = location.pathname.startsWith('/edit-blog'); // Check if on the Edit Blog page
      const isAddBlogPage = location.pathname === '/addblogpost'; // Check if on the Add Blog page
+     const isProfilePage = location.pathname === '/profile'; // Check if on the Add Blog page
      const isBlogPage = location.pathname.startsWith('/blog'); // Check if on the Blog page
     return (
         <>
-        <nav className="flex flex-row gap-x-2 w-full h-12 justify-end items-center bg-black px-9">
+        <nav className="flex flex-row gap-x-2 w-full h-12 justify-between  items-center bg-black px-9">
+            <div className="mainLogo text-2xl uppercase font-bold"><Link to={'/home'}>Blog</Link></div>
+            <div className="navMenu flex flex-row gap-x-2 w-full h-12 justify-end  items-center bg-black px-9">
             {userLoggedIn ? (
                 <>
                     {/* Home Link */}
-                    {(isAddBlogPage || isEditPage || isBlogPage) ? (
+                    {(isAddBlogPage || isEditPage || isBlogPage || isProfilePage) ? (
                         <div
                             className="text-sm text-blue-600 font-bold text-white cursor-pointer"
                             onClick={() => navigate('/home')} // Navigate to Home page
@@ -95,12 +98,12 @@ const Header = () => {
                             {userData?.fullName || currentUser.email}
                         </p>
                         <ul className="absolute hidden group-hover:block dropdown-menu bg-black p-3">
-                            <li className="dropdown-menu-item hover:underline cursor-pointer">Profile</li>
+                            <li className="dropdown-menu-item hover:underline cursor-pointer"><Link to={'/profile'}>Profile</Link></li>
                             <li className="dropdown-menu-item hover:underline cursor-pointer">Settings</li>
                             <li
                                 onClick={() => {
                                     doSignOut().then(() => {
-                                        navigate('/login');
+                                        window.location.href = '/login';
                                     });
                                 }}
                                 className="dropdown-menu-item hover:underline cursor-pointer"
@@ -120,6 +123,7 @@ const Header = () => {
                     </Link>
                 </>
             )}
+            </div>
         </nav>
     </>
     );
