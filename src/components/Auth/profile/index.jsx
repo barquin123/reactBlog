@@ -3,6 +3,7 @@ import { useAuth } from "../../../context/authContext";
 import { collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../../firebase/firebase";
 import { doSignOut } from "../../../firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
     const { currentUser } = useAuth();
@@ -10,7 +11,7 @@ const Profile = () => {
     const [fullName, setFullName] = useState(''); // The user's name to display
     const [isEditing, setIsEditing] = useState(false); // State to toggle edit mode
     const [newFullName, setNewFullName] = useState(''); // State to store the new name
-
+    const navigate = useNavigate();
     useEffect(() => {
         const fetchUserProfile = async () => {
             if (currentUser) {
@@ -89,7 +90,7 @@ const Profile = () => {
                             )}
                         </div>
                         <p className="mb-3">Email: {userProfile.email}</p>
-                        <button className="mb-3" onClick={() => {doSignOut().then(() => {window.location.href = '/login';});}}>Log Out</button>
+                        <button className="mb-3" onClick={() => {doSignOut().then(() => {navigate('/login');;});}}>Log Out</button>
                     </div>
                 )}
             </div>
