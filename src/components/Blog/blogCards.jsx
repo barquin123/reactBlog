@@ -23,11 +23,11 @@ const BlogCards = ({
               alt="Blog Thumbnail"
             />
           </figure>
-          <h2 className="blogTitle font-bold text-6xl uppercase">{blogTitle}</h2>
+          <h2 className="blogTitle font-bold text-3xl uppercase">{blogTitle}</h2>
           <p>{blogShortDesc}</p>
-          <p className="group flex justify-between">
-            <span className="createdAt">{blogCreatedAt}</span>
-            <span className="createdBy">{blogCreatedBy}</span>
+          <p className="group flex justify-between flex-wrap">
+            <span className="createdAt w-60">{blogCreatedAt}</span>
+            <span className="createdBy w-fit">{blogCreatedBy}</span>
           </p>
         </Link>
 

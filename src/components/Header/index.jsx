@@ -14,7 +14,7 @@ const Header = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            if (!currentUser) return;
+            // if (!currentUser) return;
 
             try {
                 const docRef = doc(db, 'Users', currentUser.uid);
@@ -115,6 +115,9 @@ const Header = () => {
                 </>
             ) : (
                 <>
+                    <Link className="text-sm text-blue-600 font-bold text-white" to={'/home'}>
+                        Home
+                    </Link>
                     <Link className="text-sm text-blue-600 font-bold text-white" to={'/login'}>
                         Login
                     </Link>
