@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState, useRef } from 'react';
+import React, { useEffect, useReducer, useRef, useState } from 'react';
 import { BlogInistialState, BlogReducer } from './blogReducer';
 import { storage, db, auth } from '../../firebase/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
@@ -7,14 +7,11 @@ import { useNavigate } from 'react-router-dom';
 
 const AddBlogPost = () => {
   const [state, dispatch] = useReducer(BlogReducer, BlogInistialState);
-  const [isloading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const { currentUser } = auth;
-  const navigate = useNavigate();
-
-  // Create a ref for the file input
+  const [fileName, setFileName] = useState('')
   const fileInputRef = useRef(null);
-  const [fileName, setFileName] = useState(''); // To store the name of the file selected
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!currentUser) {
@@ -26,7 +23,7 @@ const AddBlogPost = () => {
   const handleInputChange = e => {
     dispatch({
       type: 'changeInputs',
-      payload: { name: e.target.name, value: e.target.value }
+      payload: { name: e.target.name, value: e.target.value },
     });
   };
 
@@ -42,13 +39,12 @@ const AddBlogPost = () => {
     }
   };
 
-  // Function to clear the file and preview state, and reset the input value
+  // Function to clear the file and preview state
   const handleClearPreview = () => {
     dispatch({
       type: 'changeFile',
       payload: { file: null, preview: null },
     });
-    // Reset the file input value and remove the file name
     if (fileInputRef.current) {
       fileInputRef.current.value = ''; // Clears the file input
       setFileName(''); // Reset file name
@@ -57,15 +53,49 @@ const AddBlogPost = () => {
 
   // Form validation function
   const validateForm = () => {
-    if (!state.title || !state.shortDesc || !state.content) {
-      setError('Please fill in all required fields');
-      return false;
+    let valid = true;
+
+    // Reset previous errors
+    dispatch({
+      type: 'setError',
+      payload: { field: 'title', message: '' },
+    });
+    dispatch({
+      type: 'setError',
+      payload: { field: 'shortDesc', message: '' },
+    });
+    dispatch({
+      type: 'setError',
+      payload: { field: 'content', message: '' },
+    });
+
+    // Validation checks
+    if (!state.title) {
+      dispatch({
+        type: 'setError',
+        payload: { field: 'title', message: 'Title is required' },
+      });
+      valid = false;
     }
-    setError('');
-    return true;
+    if (!state.shortDesc) {
+      dispatch({
+        type: 'setError',
+        payload: { field: 'shortDesc', message: 'Short Description is required' },
+      });
+      valid = false;
+    }
+    if (!state.content) {
+      dispatch({
+        type: 'setError',
+        payload: { field: 'content', message: 'Content is required' },
+      });
+      valid = false;
+    }
+
+    return valid;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
     if (!validateForm()) {
       return; // Stop submission if validation fails
@@ -77,11 +107,11 @@ const AddBlogPost = () => {
       let downloadURL = null; // Initialize the image URL as null
 
       // Create a reference for the image in Firebase Storage
-      if (state.image) {
-        const storageRef = ref(storage, `blogImages/${state.image.name}`);
+      if (state.file) {
+        const storageRef = ref(storage, `blogImages/${state.file.name}`);
 
         // Upload the image to Firebase Storage
-        await uploadBytes(storageRef, state.image);
+        await uploadBytes(storageRef, state.file);
 
         // Get the download URL of the uploaded image
         downloadURL = await getDownloadURL(storageRef);
@@ -118,28 +148,30 @@ const AddBlogPost = () => {
   };
 
   function autoheight(element) {
-    var el = document.getElementById(element);
-    el.style.height = (el.scrollHeight) + "px";
+    const el = document.getElementById(element);
+    el.style.height = `${el.scrollHeight}px`;
   }
 
   return (
     <>
-      {isloading && <div className='fixed loaderContainer top-0 left-0 z-50 w-full h-full bg-black bg-opacity-50 block '>
-        <div className="loader">
-          <span>Loading...</span>
+      {isLoading && (
+        <div className="fixed loaderContainer top-0 left-0 z-50 w-full h-full bg-black bg-opacity-50 block">
+          <div className="loader">
+            <span>Loading...</span>
+          </div>
         </div>
-      </div>}
+      )}
 
       <div className="AddBlogPostContainer container w-96 mx-auto">
-        <h2 className='text-3xl font-bold text-center mb-5'>New Blog Post</h2>
-        <form className='addBlogForm'>
-          <div className="form-control flex flex-col mb-5">
+        <h2 className="text-3xl font-bold text-center mb-5">New Blog Post</h2>
+        <form className="addBlogForm">
+        <div className="form-control flex flex-col mb-5">
             <label>Thumbnail</label>
             <input
               type="file"
               className='thumbNailImg outline-none hidden' // Hide the file input
-              id='thumbNailImg'
               onChange={handleImgChange}
+              id='thumbNailImg'
               ref={fileInputRef} // Reference to the file input
             />
             {/* Custom file input */}
@@ -170,42 +202,57 @@ const AddBlogPost = () => {
           <div className="form-control flex flex-col mb-5">
             <label htmlFor="title">Title</label>
             <input
-              className='min-h-5 p-3 outline-none'
-              type='text'
-              id='title'
-              name='title'
+              className="min-h-5 p-3 outline-none"
+              type="text"
+              id="title"
+              name="title"
               required
               onChange={handleInputChange}
               onInput={() => autoheight('title')}
             />
+            {state.errors.title && (
+              <p className="text-red-500 text-sm mt-2">{state.errors.title}</p>
+            )}
           </div>
           <div className="form-control flex flex-col mb-5">
-            <label htmlFor='content'>Short Description</label>
+            <label htmlFor="content">Short Description</label>
             <textarea
-              className='min-h-100 p-3 outline-none'
-              id='shortDesc'
-              name='shortDesc'
+              className="min-h-100 p-3 outline-none"
+              id="shortDesc"
+              name="shortDesc"
               required
               onChange={handleInputChange}
               onInput={() => autoheight('shortDesc')}
             />
+            {state.errors.shortDesc && (
+              <p className="text-red-500 text-sm mt-2">{state.errors.shortDesc}</p>
+            )}
           </div>
           <div className="form-control flex flex-col mb-5">
-            <label htmlFor='content'>Content</label>
+            <label htmlFor="content">Content</label>
             <textarea
-              className='min-h-100 p-3 outline-none'
-              id='content'
-              name='content'
+              className="min-h-100 p-3 outline-none"
+              id="content"
+              name="content"
               required
               onChange={handleInputChange}
               onInput={() => autoheight('content')}
             />
+            {state.errors.content && (
+              <p className="text-red-500 text-sm mt-2">{state.errors.content}</p>
+            )}
           </div>
-          <button onClick={handleSubmit} className='p-5 bg-green-400 hover:brightness-50' type='submit'>Add Post</button>
+          <button
+            onClick={handleSubmit}
+            className="p-5 bg-green-400 hover:brightness-50"
+            type="submit"
+          >
+            Add Post
+          </button>
         </form>
       </div>
     </>
   );
-}
+};
 
 export default AddBlogPost;

@@ -12,6 +12,12 @@ export default {
         '3/4': '75%',
         '100': '100px'
       },
+      maxWidth: {
+        'cardBlog': '640px',
+      },
+      maxHeight: {
+        'cardBlog': '427px',
+      },
     },
   },
   plugins: [],
