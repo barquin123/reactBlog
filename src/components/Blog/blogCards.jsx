@@ -12,20 +12,19 @@ const BlogCards = ({
   onDelete 
 }) => {
   return (
-    <div className="group cards-Container flex flex-col justify-center max-w-cardBlog m-auto">
+    <div className="group cards-Container flex flex-col justify-center max-w-cardBlog m-auto bg-black mb-5 border border-white rounded p-5 backdrop-blur-3xl bg-opacity-40">
       <div className="cards mb-5">
         <Link to={hrefLink}>
           <figure className='relative overflow-hidden'>
             <img src={blogImage} alt="" className="bgimg absolute  " style={{ background: `url(${blogImage})`, filter: 'blur(10px)', zIndex: "-1"}} />
             <img
-              lazy="true"
               className="blogThumb max-h-cardBlog mx-auto z-10 relative"
               src={blogImage}
               alt="Blog Thumbnail"
             />
           </figure>
-          <h2 className="blogTitle font-bold text-3xl uppercase">{blogTitle}</h2>
-          <p>{blogShortDesc}</p>
+          <h2 className="blogTitle font-bold text-3xl uppercase mb-3">{blogTitle}</h2>
+          <p className='italic mb-2'>{blogShortDesc}</p>
           <p className="group flex justify-between flex-wrap">
             <span className="createdAt w-60">{blogCreatedAt}</span>
             <span className="createdBy w-fit">{blogCreatedBy}</span>
