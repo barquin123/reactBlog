@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, Links, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/authContext';
 import { doSignOut } from '../../firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
@@ -17,29 +17,31 @@ const Header = () => {
             // if (!currentUser) return;
 
             try {
-                const docRef = doc(db, 'Users', currentUser.uid);
-                const docSnap = await getDoc(docRef);
+                if (currentUser){
+                    const docRef = doc(db, 'Users', currentUser.uid);
+                    const docSnap = await getDoc(docRef);
 
-                if (docSnap.exists()) {
-                    const userDoc = docSnap.data();
-                    setUserData({
-                        ...userDoc,
-                        fullName: userDoc.fullName || currentUser.displayName, // Fallback to displayName
-                    });
-                } else {
-                    console.log('No such document! Creating one...');
+                    if (docSnap.exists()) {
+                        const userDoc = docSnap.data();
+                        setUserData({
+                            ...userDoc,
+                            fullName: userDoc.fullName || currentUser.displayName, // Fallback to displayName
+                        });
+                    } else {
+                        console.log('No such document! Creating one...');
 
-                    // Create new user document in Firestore
-                    const newUserData = {
-                        fullName: currentUser.displayName || 'Anonymous User',
-                        email: currentUser.email,
-                        photoURL: currentUser.photoURL || '',
-                        createdAt: new Date(),
-                        userId: currentUser.uid,
-                    };
+                        // Create new user document in Firestore
+                        const newUserData = {
+                            fullName: currentUser.displayName || 'Anonymous User',
+                            email: currentUser.email,
+                            photoURL: currentUser.photoURL || '',
+                            createdAt: new Date(),
+                            userId: currentUser.uid,
+                        };
 
-                    await setDoc(docRef, newUserData);
-                    setUserData(newUserData);
+                        await setDoc(docRef, newUserData);
+                        setUserData(newUserData);
+                    }
                 }
             } catch (error) {
                 console.error('Error fetching user data:', error);
@@ -69,7 +71,7 @@ const Header = () => {
         <nav className="flex flex-row gap-x-2 w-full h-12 justify-between  items-center bg-black px-9">
             <div className="mainLogo text-2xl uppercase font-bold"><Link to={'/home'}>Blog</Link></div>
             <div className="navMenu flex flex-row gap-x-2 w-full h-12 justify-end  items-center bg-black px-9">
-            {userLoggedIn ? (
+            {currentUser && userLoggedIn ? (
                 <>
                     {/* Home Link */}
                     {(isAddBlogPage || isEditPage || isBlogPage || isProfilePage) ? (

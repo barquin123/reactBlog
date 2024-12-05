@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Navigate, Link, useNavigate } from 'react-router-dom'
 import { doCreateUserWithEmailAndPassword } from '../../../firebase/auth'
 import { setDoc, doc } from 'firebase/firestore'

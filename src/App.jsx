@@ -1,18 +1,46 @@
+import { useEffect } from "react";
+import { useRoutes, useLocation } from "react-router-dom";
+
 import Login from "./components/Auth/login";
 import Register from "./components/Auth/register";
 import AddBlogPost from "./components/Blog/addBlogPost";
-
 import Header from "./components/Header";
 import Home from "./components/Home";
-
 import { AuthProvider } from "./context/authContext";
-import { useRoutes, useLocation  } from "react-router-dom";
 import BlogPost from "./components/Blog/index";
 import EditBlog from "./components/Blog/editBlog";
 import Profile from "./components/Auth/profile";
 
 function App() {
   const location = useLocation();
+
+  // Set the document title whenever the route changes
+  useEffect(() => {
+    // Define titles for specific routes inside useEffect
+    const routeTitles = {
+      "/": "Home - My Blog App",
+      "/login": "Login - My Blog App",
+      "/register": "Register - My Blog App",
+      "/home": "Home - My Blog App",
+      "/addblogpost": "Add Blog Post - My Blog App",
+      "/profile": "Profile - My Blog App",
+      // We need to match dynamic routes like "/blog/:id" and "/edit-blog/:blogId"
+    };
+
+    const currentPath = location.pathname;
+    
+    // Try to match dynamic routes
+    if (currentPath.startsWith("/blog/")) {
+      document.title = "Blog Post - My Blog App";
+    } else if (currentPath.startsWith("/edit-blog/")) {
+      document.title = "Edit Blog Post - My Blog App";
+    } else {
+      // For static paths
+      document.title = routeTitles[currentPath] || "My Blog App"; // Fallback title
+    }
+  }, [location.pathname]); // Only depend on location.pathname
+
+  // Define routes
   const routesArray = [
     {
       path: "*",
@@ -39,17 +67,16 @@ function App() {
       element: <BlogPost />,
     },
     {
-      path: "/edit-blog/:blogId",  // Add route for edit blog
-      element: <EditBlog />,  // Link to EditBlog component
+      path: "/edit-blog/:blogId",
+      element: <EditBlog />,
     },
     {
-      path: "/profile",  // Add route for edit blog
-      element: <Profile />,  // Link to EditBlog component
+      path: "/profile",
+      element: <Profile />,
     },
   ];
   let routesElement = useRoutes(routesArray);
 
-  // const shouldShowHeader = location.pathname === "/home" || "/addblogpost";
   return (
     <AuthProvider>
       <Header />

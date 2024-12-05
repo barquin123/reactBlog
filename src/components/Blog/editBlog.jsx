@@ -1,9 +1,9 @@
-import React, { useEffect, useReducer, useState } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom'; // useParams for URL params
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { db } from '../../firebase/firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'; // Firebase storage utilities
+import { db, storage } from '../../firebase/firebase'; // Import Firestore and Storage
 import { BlogPostInitialState, BlogPostReducer, SET_ERROR, SET_LOADING, UPDATE_BLOG } from '../Home/blogPostReducer';
-// import { BlogPostReducer, BlogPostInitialState, UPDATE_BLOG, SET_LOADING, SET_ERROR } from './blogPostReducer'; // Import reducer and actions
 
 const EditBlog = () => {
   const { blogId } = useParams(); // Get the blogId from the URL
@@ -15,19 +15,21 @@ const EditBlog = () => {
     content: '',
     imageUrl: '',
   });
-  const { blogs, isLoading, error } = state;
+  const [selectedImage, setSelectedImage] = useState(null); // State to track the selected image file
+  const [previewImage, setPreviewImage] = useState(''); // State for image preview
+  const { isLoading, error } = state;
 
   useEffect(() => {
-    
     // Fetch the blog data from Firestore when the component mounts
     const fetchBlogData = async () => {
       dispatch({ type: SET_LOADING, payload: true });
       try {
         const docRef = doc(db, 'blogs', blogId);
         const docSnap = await getDoc(docRef);
-        
         if (docSnap.exists()) {
-          setBlog(docSnap.data());
+          const data = docSnap.data();
+          setBlog(data);
+          setPreviewImage(data.imageUrl); // Set the existing image as the preview
         } else {
           dispatch({ type: SET_ERROR, payload: 'Blog not found' });
         }
@@ -50,10 +52,34 @@ const EditBlog = () => {
     });
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setSelectedImage(file);
+
+    // Generate a preview for the selected file
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreviewImage(reader.result);
+    };
+    if (file) {
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     dispatch({ type: SET_LOADING, payload: true });
+
     try {
+      let imageUrl = blog.imageUrl; // Preserve the existing image URL if no new file is uploaded
+
+      // If a new image file is selected, upload it to Firebase Storage
+      if (selectedImage) {
+        const storageRef = ref(storage, `blogImages/${blogId}/${selectedImage.name}`);
+        await uploadBytes(storageRef, selectedImage);
+        imageUrl = await getDownloadURL(storageRef); // Get the download URL for the uploaded file
+      }
+
       const docRef = doc(db, 'blogs', blogId);
 
       // Update the blog data in Firestore
@@ -61,19 +87,19 @@ const EditBlog = () => {
         title: blog.title,
         shortDesc: blog.shortDesc,
         content: blog.content,
-        imageUrl: blog.imageUrl, // If the image URL changes, you can handle it similarly
+        imageUrl, // Update the image URL
       });
 
       // Dispatch the UPDATE_BLOG action to update the state
-      dispatch({ 
-        type: UPDATE_BLOG, 
-        payload: { 
-          id: blogId, 
-          updatedData: blog 
-        }
+      dispatch({
+        type: UPDATE_BLOG,
+        payload: {
+          id: blogId,
+          updatedData: { ...blog, imageUrl },
+        },
       });
 
-      // Navigate back to the home page after updating the blog
+      // Navigate back to the blog page after updating
       navigate(`/blog/${blogId}`);
     } catch (err) {
       dispatch({ type: SET_ERROR, payload: 'Error updating blog' });
@@ -82,6 +108,10 @@ const EditBlog = () => {
       dispatch({ type: SET_LOADING, payload: false });
     }
   };
+
+  const handleCancel = () => {
+    navigate(`/blog/${blogId}`);
+  }
 
   if (isLoading) {
     return <div className="text-xl font-medium pt-14">Loading...</div>;
@@ -130,22 +160,39 @@ const EditBlog = () => {
           />
         </div>
         <div className="form-control flex flex-col mb-5">
-          <label htmlFor="imageUrl">Image URL</label>
+          <label htmlFor="imageUrl">Image
+          {previewImage && (
+            <img
+              src={previewImage}
+              alt="Preview"
+              className="w-full h-48 object-cover mb-4 rounded"
+            />
+          )}
+          </label>
+          {/* <label htmlFor="imageUrl ">{ previewImage ? previewImage : "choose file" }</label> */}
           <input
-            type="text"
+            type="file"
             name="imageUrl"
             id="imageUrl"
-            value={blog.imageUrl}
-            onChange={handleInputChange}
-            className="min-h-5 p-3 outline-none"
+            onChange={handleFileChange}
+            className="min-h-5 p-3 outline-none hidden"
           />
         </div>
+        <div className="flex gap-2">
         <button
           type="submit"
           className="p-5 bg-green-400 hover:brightness-50"
         >
           Update Post
         </button>
+        <button
+          type="button"
+          onClick={() => handleCancel()}
+          className="p-5 bg-red-400 hover:brightness-50"
+        >
+          Cancel
+        </button> 
+        </div>
       </form>
     </div>
   );

@@ -1,7 +1,7 @@
-import React, { useEffect, useReducer, useRef } from "react";
+import { useEffect, useReducer, useRef } from "react";
 import { useAuth } from "../../context/authContext";
 import { useNavigate } from "react-router-dom";
-import { doc, getDoc, setDoc, collection, getDocs, deleteDoc } from "firebase/firestore";
+import { doc, collection, getDocs, deleteDoc } from "firebase/firestore";
 import { db } from "../../firebase/firebase";
 import BlogCards from "../Blog/blogCards";
 import {
@@ -115,7 +115,7 @@ const Home = () => {
         </button>
         <div ref={carouselRef} className="carousel-container flex overflow-hidden space-x-4 scrollbar-hide">
           {blogs.slice(3).map((blog) => (
-            <div key={blog.id} className="flex-shrink-0 w-72 p-2 shadow-md rounded-lg" >
+            <div key={blog.id} className="flex-shrink-0 w-72 p-2 shadow-md rounded-lg [&_img.blogThumb]:max-h-smallCard" >
               <BlogCards
                 blogTitle={blog.title}
                 blogImage={blog.imageUrl || "https://placehold.jp/640x427.png"}

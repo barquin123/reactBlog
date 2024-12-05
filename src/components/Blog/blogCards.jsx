@@ -18,6 +18,7 @@ const BlogCards = ({
           <figure className='relative overflow-hidden'>
             <img src={blogImage} alt="" className="bgimg absolute  " style={{ background: `url(${blogImage})`, filter: 'blur(10px)', zIndex: "-1"}} />
             <img
+              lazy="true"
               className="blogThumb max-h-cardBlog mx-auto z-10 relative"
               src={blogImage}
               alt="Blog Thumbnail"

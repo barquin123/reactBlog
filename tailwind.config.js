@@ -14,9 +14,11 @@ export default {
       },
       maxWidth: {
         'cardBlog': '640px',
+        
       },
       maxHeight: {
         'cardBlog': '427px',
+        'smallCard': '180px',
       },
     },
   },
