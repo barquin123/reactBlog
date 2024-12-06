@@ -139,10 +139,12 @@ const Header = ({onToggle}) => {
                     if(toggled){
                         hamburgerMenu.classList.remove('translate-x-full');
                         hamburgerMobileNav.classList.add('z-10');
+                        hamburgerMobileNav.classList.add('backdrop-blur-sm');
                     }else{
                         hamburgerMenu.classList.add('translate-x-full');
                         hamburgerMenu.classList.add('translate-x-full');
                         hamburgerMobileNav.classList.remove('z-10');
+                        hamburgerMobileNav.classList.remove('backdrop-blur-sm');
                     }
                 }} />
             </div>
@@ -152,6 +154,16 @@ const Header = ({onToggle}) => {
                 { currentUser && userLoggedIn ? (
                     <div className="hamburgerMenuLinks">
                         <ul>
+                            <li>
+                            <img
+                                className="rounded-full w-8 m-auto"
+                                src={currentUser.photoURL && currentUser.photoURL.trim() !== '' ? currentUser.photoURL : 'https://www.gravatar.com/avatar/?d=identicon'}
+                                alt="User Avatar"
+                            />
+                            <span className='text-sm text-blue-600 font-bold text-white cursor-pointer'>
+                                {userData?.fullName || currentUser.email}
+                            </span>
+                            </li>
                             <li>
                                 <Link to={'/home'}>Home</Link>
                             </li>
@@ -174,7 +186,7 @@ const Header = ({onToggle}) => {
                     <div className="hamburgerMenuLinks">
                         <ul>
                             <li>
-                                <Link to={'/home'}>Home</Link>
+                                <Link to={'/home'} >Home</Link>
                             </li>
                             <li>
                                 <Link to={'/login'}>Login</Link>

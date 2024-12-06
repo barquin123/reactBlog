@@ -58,7 +58,7 @@ const Profile = () => {
 
     return (
         <>
-            <div className="profileCard max-w-3xl bg-black mx-auto text-center h-80 p-5">
+            <div className="profileCard max-w-3xl bg-black mx-auto text-center h-80 p-5 relative z-2">
             <h1 className="mb-3 uppercase font-bold text-2xl">Profile</h1>
                 {userProfile && (
                     <div>

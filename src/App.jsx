@@ -98,7 +98,7 @@ function App() {
         <Particlesjsx />
       <div className="content">
         <Header onToggle={handleHamburgerToggle} />
-        <div className={`py-5 px-2 ${isHamburgerOpen ? 'overflow-y-hidden' : ''}`}>{routesElement}</div>
+        <div className="py-5 px-2 relative z-1">{routesElement}</div>
       </div>
     </AuthProvider>
   );
