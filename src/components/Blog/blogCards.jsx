@@ -12,7 +12,7 @@ const BlogCards = ({
   onDelete 
 }) => {
   return (
-    <div className="group cards-Container flex flex-col justify-center max-w-cardBlog m-auto bg-black mb-5 border border-white rounded p-5 backdrop-blur-3xl bg-opacity-40">
+    <div className="group cards-Container flex flex-col justify-center max-w-cardBlog m-auto bg-black mb-5 border border-white rounded p-5 backdrop-blur-sm bg-opacity-40">
       <div className="cards mb-5">
         <Link to={hrefLink}>
           <figure className='relative overflow-hidden'>

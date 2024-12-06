@@ -23,3 +23,6 @@
   top: 50%;
 }
 
+#tsparticles{
+  z-index: -1;
+}

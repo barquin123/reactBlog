@@ -10,6 +10,7 @@ import { AuthProvider } from "./context/authContext";
 import BlogPost from "./components/Blog/index";
 import EditBlog from "./components/Blog/editBlog";
 import Profile from "./components/Auth/profile";
+import Particlesjsx from "./components/particles/particles";
 
 function App() {
   const location = useLocation();
@@ -79,6 +80,7 @@ function App() {
 
   return (
     <AuthProvider>
+        <Particlesjsx />
       <Header />
       <div className="py-5">{routesElement}</div>
     </AuthProvider>
