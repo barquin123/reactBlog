@@ -160,7 +160,7 @@ const EditBlog = () => {
           />
         </div>
         <div className="form-control flex flex-col mb-5">
-          <label htmlFor="imageUrl">Image
+          <label htmlFor="imageUrl" className='cursor-pointer'>Image
           {previewImage && (
             <img
               src={previewImage}

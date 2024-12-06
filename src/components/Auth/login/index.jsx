@@ -51,7 +51,7 @@ const Login = () => {
       {userLoggedIn && <Navigate to={"/home"} replace={true} />}
 
       <main className="w-full flex self-center place-content-center place-items-center">
-        <div className="w-96 text-gray-600 space-y-5 p-4 shadow-xl border rounded-xl mt-5">
+        <div className="w-96 text-gray-600 space-y-5 p-4 shadow-xl border rounded-xl mt-5 backdrop-blur-sm">
           <div className="text-center">
             <div className="mt-2">
               <h3 className="text-white text-xl font-semibold sm:text-2xl">Welcome Back</h3>

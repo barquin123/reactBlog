@@ -91,7 +91,17 @@ const Particlesjsx = () => {
                         random: false,
                         speed: 1,
                         straight: false,
+                        vibrate: false,
+                        warp: false,
+                        // gravity: {
+                        //     enable: true,
+                        //     acceleration: 9.81,
+
+                        // }
+                        
+                        
                     },
+                    
                     number: {
                         density: {
                             enable: true,
@@ -99,6 +109,19 @@ const Particlesjsx = () => {
                         },
                         value: 150,
                     },
+                    // zIndex: {
+                    //     value: -10
+                    // },
+                    // twinkles: {
+                    //     enable: true,
+                    //     frequency: 0.05,
+                    //     opacity: 0.5,
+                    // },
+                    // wobble:{
+                    //     distance: 30,
+                    //     enable: true,
+                    //     speed: 1,
+                    // },
                     opacity: {
                         value: 0.5,
                     },
