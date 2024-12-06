@@ -4,6 +4,7 @@ import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'; // Firebase storage utilities
 import { db, storage } from '../../firebase/firebase'; // Import Firestore and Storage
 import { BlogPostInitialState, BlogPostReducer, SET_ERROR, SET_LOADING, UPDATE_BLOG } from '../Home/blogPostReducer';
+import Loading from '../Modal/loading';
 
 const EditBlog = () => {
   const { blogId } = useParams(); // Get the blogId from the URL
@@ -114,7 +115,7 @@ const EditBlog = () => {
   }
 
   if (isLoading) {
-    return <div className="text-xl font-medium pt-14">Loading...</div>;
+    return <Loading/>
   }
 
   if (error) {

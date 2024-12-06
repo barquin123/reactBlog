@@ -4,6 +4,7 @@ import { deleteDoc, doc, getDoc } from 'firebase/firestore';
 import { db } from '../../firebase/firebase'; // make sure to import your Firestore configuration
 import { BlogPostInitialState, BlogPostReducer, DELETE_BLOG } from '../Home/blogPostReducer';
 import { useAuth } from '../../context/authContext';
+import Loading from '../Modal/loading';
 
 const BlogPost = () => {
   const { id } = useParams(); // Use the `id` from the URL
@@ -51,7 +52,7 @@ const BlogPost = () => {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>; // Show a loading state while fetching
+    return <Loading/> ; // Show a loading state while fetching
   }
 
   if (!blog) {

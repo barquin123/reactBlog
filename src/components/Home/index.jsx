@@ -12,6 +12,7 @@ import {
   SET_ERROR,
   SET_LOADING,
 } from "./blogPostReducer";
+import Loading from "../Modal/loading";
 
 const Home = () => {
   const [state, dispatch] = useReducer(BlogPostReducer, BlogPostInitialState);
@@ -72,7 +73,7 @@ const Home = () => {
   const { blogs, isLoading, error } = state;
 
   if (isLoading) {
-    return <div className="text-xl font-medium pt-14 max-w-3xl mx-auto">Loading...</div>;
+    return <Loading/> ;
   }
 
   if (error) {

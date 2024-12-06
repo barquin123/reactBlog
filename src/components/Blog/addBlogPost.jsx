@@ -4,6 +4,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { collection, addDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { BlogInistialState, BlogReducer } from './addBlogReducer';
+import Loading from '../Modal/loading';
 
 const AddBlogPost = () => {
   const [state, dispatch] = useReducer( BlogReducer, BlogInistialState);
@@ -154,11 +155,7 @@ const AddBlogPost = () => {
   return (
     <>
       {isLoading && (
-        <div className="fixed loaderContainer top-0 left-0 z-50 w-full h-full bg-black bg-opacity-50 block">
-          <div className="loader">
-            <span>Loading...</span>
-          </div>
-        </div>
+        <Loading/>
       )}
 
       <div className="AddBlogPostContainer container w-96 mx-auto">

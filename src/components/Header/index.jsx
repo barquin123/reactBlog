@@ -5,6 +5,7 @@ import { doSignOut } from '../../firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../../firebase/firebase';
 import Hamburger from 'hamburger-react'
+import Loading from '../Modal/loading';
 
 const Header = ({onToggle}) => {
     const navigate = useNavigate();
@@ -58,7 +59,7 @@ const Header = ({onToggle}) => {
     // };
 
     if (loading) {
-        return null; // Optionally, display a loading spinner
+        return <Loading/> 
     }
 
      // Check if we are on the edit-blog page
@@ -137,16 +138,16 @@ const Header = ({onToggle}) => {
                     var hamburgerMobileNav = document.querySelector('.mobileNav');
                     if(toggled){
                         hamburgerMenu.classList.remove('translate-x-full');
-                        hamburgerMobileNav.classList.add('backdrop-blur-sm');
+                        hamburgerMobileNav.classList.add('z-10');
                     }else{
                         hamburgerMenu.classList.add('translate-x-full');
                         hamburgerMenu.classList.add('translate-x-full');
-                        hamburgerMobileNav.classList.remove('backdrop-blur-sm');
+                        hamburgerMobileNav.classList.remove('z-10');
                     }
                 }} />
             </div>
         </nav>
-        <nav className='mobileNav block lg:hidden w-full absolute h-screen overflow-hidden z-10  overscroll-contain '>
+        <nav className='mobileNav block lg:hidden w-full absolute h-screen overflow-hidden'>
             <div className="hamburgerMenu h-screen bg-black w-fit p-5 [&_ul]:flex [&_ul]:flex-col [&_ul]:gap-y-3 absolute right-0 z-10 translate-x-full transition-all ">
                 { currentUser && userLoggedIn ? (
                     <div className="hamburgerMenuLinks">
