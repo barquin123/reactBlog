@@ -4,6 +4,7 @@ import { useAuth } from '../../context/authContext';
 import { doSignOut } from '../../firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../../firebase/firebase';
+import Hamburger from 'hamburger-react'
 
 const Header = () => {
     const navigate = useNavigate();
@@ -69,8 +70,9 @@ const Header = () => {
     return (
         <>
         <nav className="flex flex-row gap-x-2 w-full h-12 justify-between  items-center bg-black px-9">
+            
             <div className="mainLogo text-2xl uppercase font-bold"><Link to={'/home'}>Blog</Link></div>
-            <div className="navMenu flex flex-row gap-x-2 w-full h-12 justify-end  items-center bg-black px-9">
+            <div className="navMenu hidden flex-row gap-x-2 w-full h-12 justify-end  items-center bg-black px-9 lg:flex">
             {currentUser && userLoggedIn ? (
                 <>
                     {/* Home Link */}
@@ -128,6 +130,61 @@ const Header = () => {
                     </Link>
                 </>
             )}
+            </div>
+            <div className="hamburgerIcon block lg:hidden">
+                <Hamburger onToggle={toggled => {
+                    var hamburgerMenu = document.querySelector('.hamburgerMenu');
+                    var hamburgerMobileNav = document.querySelector('.hamburgerMenu');
+                    if(toggled){
+                        hamburgerMenu.classList.remove('translate-x-full');
+                        hamburgerMobileNav.classList.remove('backdrop-blur-sm');
+                    }else{
+                        hamburgerMenu.classList.add('translate-x-full');
+                        hamburgerMenu.classList.add('translate-x-full');
+                    }
+                }} />
+            </div>
+        </nav>
+        <nav className='mobileNav block lg:hidden w-full absolute h-screen overflow-hidden z-10  overscroll-contain'>
+            <div className="hamburgerMenu h-screen bg-black w-fit p-5 [&_ul]:flex [&_ul]:flex-col [&_ul]:gap-y-3 absolute right-0 z-10 translate-x-full transition-all">
+                { currentUser && userLoggedIn ? (
+                    <div className="hamburgerMenuLinks">
+                        <ul>
+                            <li>
+                                <Link to={'/home'}>Home</Link>
+                            </li>
+                            <li>
+                                <Link to={'/addblogpost'}>Add Blog</Link>
+                            </li>
+                            <li>
+                                <Link to={'/profile'}>Profile</Link>
+                            </li>
+                            <li>
+                                <Link to={'/login'} onClick={() => {
+                                    doSignOut().then(() => {
+                                        navigate('/login');
+                                    });
+                                }}>Logout</Link>
+                            </li>
+                        </ul>
+                    </div>
+                ) : (
+                    <div className="hamburgerMenuLinks">
+                        <ul>
+                            <li>
+                                <Link to={'/home'}>Home</Link>
+                            </li>
+                            <li>
+                                <Link to={'/login'}>Login</Link>
+                            </li>
+                            <li>
+                                <Link to={'/register'}>Register New Account</Link>
+                            </li>
+                        </ul>
+                    </div>
+                )
+                    
+                }
             </div>
         </nav>
     </>

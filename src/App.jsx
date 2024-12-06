@@ -81,8 +81,10 @@ function App() {
   return (
     <AuthProvider>
         <Particlesjsx />
-      <Header />
-      <div className="py-5">{routesElement}</div>
+      <div className="content">
+        <Header />
+        <div className="py-5">{routesElement}</div>
+      </div>
     </AuthProvider>
   );
 }
