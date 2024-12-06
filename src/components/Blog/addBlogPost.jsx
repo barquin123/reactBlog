@@ -132,7 +132,6 @@ const AddBlogPost = () => {
       const docRef = await addDoc(collection(db, 'blogs'), blogData);
 
       // You can now access the `docRef.id`, which is the auto-generated `blogId`
-      console.log('New blog post added with ID:', docRef.id);
 
       // Optionally, you can navigate to the blog post or store `docRef.id` in the state
       navigate(`/blog/${docRef.id}`);

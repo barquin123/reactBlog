@@ -6,7 +6,7 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../../firebase/firebase';
 import Hamburger from 'hamburger-react'
 
-const Header = () => {
+const Header = ({onToggle}) => {
     const navigate = useNavigate();
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -29,7 +29,6 @@ const Header = () => {
                             fullName: userDoc.fullName || currentUser.displayName, // Fallback to displayName
                         });
                     } else {
-                        console.log('No such document! Creating one...');
 
                         // Create new user document in Firestore
                         const newUserData = {
@@ -132,21 +131,23 @@ const Header = () => {
             )}
             </div>
             <div className="hamburgerIcon block lg:hidden">
-                <Hamburger onToggle={toggled => {
+                <Hamburger onToggle={(toggled) => {
+                    onToggle(toggled);
                     var hamburgerMenu = document.querySelector('.hamburgerMenu');
-                    var hamburgerMobileNav = document.querySelector('.hamburgerMenu');
+                    var hamburgerMobileNav = document.querySelector('.mobileNav');
                     if(toggled){
                         hamburgerMenu.classList.remove('translate-x-full');
-                        hamburgerMobileNav.classList.remove('backdrop-blur-sm');
+                        hamburgerMobileNav.classList.add('backdrop-blur-sm');
                     }else{
                         hamburgerMenu.classList.add('translate-x-full');
                         hamburgerMenu.classList.add('translate-x-full');
+                        hamburgerMobileNav.classList.remove('backdrop-blur-sm');
                     }
                 }} />
             </div>
         </nav>
-        <nav className='mobileNav block lg:hidden w-full absolute h-screen overflow-hidden z-10  overscroll-contain'>
-            <div className="hamburgerMenu h-screen bg-black w-fit p-5 [&_ul]:flex [&_ul]:flex-col [&_ul]:gap-y-3 absolute right-0 z-10 translate-x-full transition-all">
+        <nav className='mobileNav block lg:hidden w-full absolute h-screen overflow-hidden z-10  overscroll-contain '>
+            <div className="hamburgerMenu h-screen bg-black w-fit p-5 [&_ul]:flex [&_ul]:flex-col [&_ul]:gap-y-3 absolute right-0 z-10 translate-x-full transition-all ">
                 { currentUser && userLoggedIn ? (
                     <div className="hamburgerMenuLinks">
                         <ul>

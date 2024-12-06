@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRoutes, useLocation } from "react-router-dom";
 
 import Login from "./components/Auth/login";
@@ -14,7 +14,22 @@ import Particlesjsx from "./components/particles/particles";
 
 function App() {
   const location = useLocation();
+  const [isHamburgerOpen, setIsHamburgerOpen] = useState(false);
 
+  const handleHamburgerToggle = (toggled) => {
+    setIsHamburgerOpen(toggled); // Update state based on child component's toggle
+  };
+
+  useEffect(() => {
+    if (isHamburgerOpen) {
+      document.body.classList.add("overflow-y-hidden");
+    } else {
+      document.body.classList.remove("overflow-y-hidden");
+    }
+
+    // Cleanup on unmount or state change
+    return () => document.body.classList.remove("overflow-y-hidden");
+  }, [isHamburgerOpen]);
   // Set the document title whenever the route changes
   useEffect(() => {
     // Define titles for specific routes inside useEffect
@@ -82,8 +97,8 @@ function App() {
     <AuthProvider>
         <Particlesjsx />
       <div className="content">
-        <Header />
-        <div className="py-5">{routesElement}</div>
+        <Header onToggle={handleHamburgerToggle} />
+        <div className={`py-5 px-2 ${isHamburgerOpen ? 'overflow-y-hidden' : ''}`}>{routesElement}</div>
       </div>
     </AuthProvider>
   );
