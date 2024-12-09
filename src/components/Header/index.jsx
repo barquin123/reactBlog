@@ -6,12 +6,14 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../../firebase/firebase';
 import Hamburger from 'hamburger-react'
 import Loading from '../Modal/loading';
+import { PropTypes } from 'prop-types';
 
 const Header = ({onToggle}) => {
     const navigate = useNavigate();
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
     const { userLoggedIn, currentUser } = useAuth();
+    const [isOpen, setOpen] = useState(false);
     // const [modalActive, setModalActive] = useState(false);
 
     useEffect(() => {
@@ -54,9 +56,31 @@ const Header = ({onToggle}) => {
         fetchData();
     }, [currentUser]);
 
-    // const modalActivate = () => {
-    //     setModalActive(!modalActive); // This line toggles the modalActive state
-    // };
+    const handleHamburgerMenuClick = (toggled) => {
+        const hamburgerMenu = document.querySelector('.hamburgerMenu');
+        const hamburgerMobileNav = document.querySelector('.mobileNav');
+    
+        // Call onToggle with the new state (toggled) so it reflects the latest state
+        onToggle(toggled);
+
+        if (isOpen){
+            setOpen(false);
+            toggled = false;
+        }
+        
+    
+        if (toggled) {
+            // Open the menu
+            hamburgerMenu.classList.remove('translate-x-full');
+            hamburgerMobileNav.classList.add('z-10');
+            hamburgerMobileNav.classList.add('backdrop-blur-sm');
+        } else {
+            // Close the menu
+            hamburgerMenu.classList.add('translate-x-full');
+            hamburgerMobileNav.classList.remove('z-10');
+            hamburgerMobileNav.classList.remove('backdrop-blur-sm');
+        }
+    };
 
     if (loading) {
         return <Loading/> 
@@ -132,21 +156,13 @@ const Header = ({onToggle}) => {
             )}
             </div>
             <div className="hamburgerIcon block lg:hidden">
-                <Hamburger onToggle={(toggled) => {
-                    onToggle(toggled);
-                    var hamburgerMenu = document.querySelector('.hamburgerMenu');
-                    var hamburgerMobileNav = document.querySelector('.mobileNav');
-                    if(toggled){
-                        hamburgerMenu.classList.remove('translate-x-full');
-                        hamburgerMobileNav.classList.add('z-10');
-                        hamburgerMobileNav.classList.add('backdrop-blur-sm');
-                    }else{
-                        hamburgerMenu.classList.add('translate-x-full');
-                        hamburgerMenu.classList.add('translate-x-full');
-                        hamburgerMobileNav.classList.remove('z-10');
-                        hamburgerMobileNav.classList.remove('backdrop-blur-sm');
-                    }
-                }} />
+                <Hamburger 
+                    toggled={isOpen} 
+                    toggle={(toggled) => {
+                        setOpen(toggled); // Update the local state
+                        handleHamburgerMenuClick(toggled); // Handle the toggle logic
+                    }} 
+                />
             </div>
         </nav>
         <nav className='mobileNav block lg:hidden w-full absolute h-screen overflow-hidden'>
@@ -165,18 +181,19 @@ const Header = ({onToggle}) => {
                             </span>
                             </li>
                             <li>
-                                <Link to={'/home'}>Home</Link>
+                                <Link to={'/home'} onClick={handleHamburgerMenuClick}>Home</Link>
                             </li>
                             <li>
-                                <Link to={'/addblogpost'}>Add Blog</Link>
+                                <Link to={'/addblogpost'} onClick={handleHamburgerMenuClick}>Add Blog</Link>
                             </li>
                             <li>
-                                <Link to={'/profile'}>Profile</Link>
+                                <Link to={'/profile'} onClick={handleHamburgerMenuClick}>Profile</Link>
                             </li>
                             <li>
                                 <Link to={'/login'} onClick={() => {
                                     doSignOut().then(() => {
                                         navigate('/login');
+                                        handleHamburgerMenuClick();
                                     });
                                 }}>Logout</Link>
                             </li>
@@ -186,13 +203,13 @@ const Header = ({onToggle}) => {
                     <div className="hamburgerMenuLinks">
                         <ul>
                             <li>
-                                <Link to={'/home'} >Home</Link>
+                                <Link to={'/home'} onClick={handleHamburgerMenuClick}>Home</Link>
                             </li>
                             <li>
-                                <Link to={'/login'}>Login</Link>
+                                <Link to={'/login'} onClick={handleHamburgerMenuClick}>Login</Link>
                             </li>
                             <li>
-                                <Link to={'/register'}>Register New Account</Link>
+                                <Link to={'/register'} onClick={handleHamburgerMenuClick}>Register New Account</Link>
                             </li>
                         </ul>
                     </div>
@@ -204,5 +221,10 @@ const Header = ({onToggle}) => {
     </>
     );
 };
+
+Header.propTypes = {
+    onToggle: PropTypes.func,
+}
+
 
 export default Header;
