@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useRef } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { useAuth } from "../../context/authContext";
 import { useNavigate } from "react-router-dom";
 import { doc, collection, getDocs, deleteDoc } from "firebase/firestore";
@@ -16,9 +16,9 @@ import Loading from "../Modal/loading";
 
 const Home = () => {
   const [state, dispatch] = useReducer(BlogPostReducer, BlogPostInitialState);
+  const [visibleBlogsCount, setVisibleBlogsCount] = useState(3); // Keep track of the number of blogs to show
   const navigate = useNavigate();
   const { currentUser } = useAuth();
-  const carouselRef = useRef(null); // Ref for carousel container
 
   useEffect(() => {
     const fetchData = async () => {
@@ -61,19 +61,14 @@ const Home = () => {
     }
   };
 
-  const handleScroll = (direction) => {
-    if (!carouselRef.current) return;
-    const scrollAmount = direction === "left" ? -270 : 270; // Scroll width
-    carouselRef.current.scrollBy({
-      left: scrollAmount,
-      behavior: "smooth",
-    });
+  const handleLoadMore = () => {
+    setVisibleBlogsCount((prevCount) => prevCount + 3); // Load 3 more blogs
   };
 
   const { blogs, isLoading, error } = state;
 
   if (isLoading) {
-    return <Loading/> ;
+    return <Loading />;
   }
 
   if (error) {
@@ -88,9 +83,9 @@ const Home = () => {
     <div className="home-container max-w-3xl mx-auto">
       <h2 className="text-2xl font-bold mb-6 text-center uppercase">Blogs</h2>
 
-      {/* First 3 blog posts as block elements */}
+      {/* First few blog posts as block elements */}
       <div className="block-items mb-8">
-        {blogs.slice(0, 3).map((blog) => (
+        {blogs.slice(0, visibleBlogsCount).map((blog) => (
           <BlogCards
             key={blog.id}
             blogTitle={blog.title}
@@ -106,35 +101,17 @@ const Home = () => {
         ))}
       </div>
 
-      {/* Remaining blog posts in a carousel */}
-      <div className="relative px-5">
-        <button
-          className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white rounded-full p-2 z-10 hover:bg-gray-700"
-          onClick={() => handleScroll("left")}
-        >
-          &#8249;
-        </button>
-        <div ref={carouselRef} className="carousel-container flex overflow-hidden space-x-4 scrollbar-hide">
-          {blogs.slice(3).map((blog) => (
-            <div key={blog.id} className="flex-shrink-0 w-72 p-2 shadow-md rounded-lg [&_img.blogThumb]:h-carouselImage [&>div.cards-Container]:min-h-carouselHome [&_h2.blogTitle]:text-xl" >
-              <BlogCards
-                blogTitle={blog.title}
-                blogImage={blog.imageUrl || "https://placehold.jp/640x427.png"}
-                blogShortDesc={blog.shortDesc}
-                blogCreatedAt={new Date(blog.createdAt.seconds * 1000).toLocaleDateString()}
-                blogCreatedBy={blog.author || "Anonymous"}
-                blogId={blog.id}
-                onEdit={currentUser && currentUser.uid === blog.authorId ? () => handleEdit(blog.id) : null}
-                onDelete={currentUser && currentUser.uid === blog.authorId ? () => handleDelete(blog.id) : null}
-                hrefLink={`/blog/${blog.id}`}
-              />
-            </div>
-          ))}
+      {/* Load More Button */}
+      {visibleBlogsCount < blogs.length && (
+        <div className="text-center mt-4">
+          <button
+            onClick={handleLoadMore}
+            className="bg-blue-600 text-white py-2 px-6 rounded-full hover:bg-blue-700"
+          >
+            Load More
+          </button>
         </div>
-        <button className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white rounded-full p-2 z-10 hover:bg-gray-700" onClick={() => handleScroll("right")}>
-          &#8250;
-        </button>
-      </div>
+      )}
     </div>
   );
 };
