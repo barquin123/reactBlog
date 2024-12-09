@@ -125,7 +125,7 @@ const Header = ({onToggle}) => {
                         <p className="text-sm text-blue-600 font-bold text-white cursor-pointer">
                             {userData?.fullName || currentUser.email}
                         </p>
-                        <ul className="absolute hidden group-hover:block dropdown-menu bg-black p-3">
+                        <ul className="absolute hidden group-hover:block dropdown-menu bg-black p-3 z-20">
                             <li className="dropdown-menu-item hover:underline cursor-pointer"><Link to={'/profile'}>Profile</Link></li>
                             <li className="dropdown-menu-item hover:underline cursor-pointer">Settings</li>
                             <li
